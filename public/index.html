@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Waterlogging Watch</title>
+<meta name="description" content="Detect standing water on roads and streets from photos, video and live camera.">
+<meta name="theme-color" content="#0b6e99">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 3c5 7 9 11.5 9 16.5A9 9 0 0 1 7 19.5C7 14.5 11 10 16 3z' fill='%230b6e99'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#analyze" aria-label="Waterlogging Watch home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><path d="M16 3c5 7 9 11.5 9 16.5A9 9 0 0 1 7 19.5C7 14.5 11 10 16 3z"/><path class="brand-wave" d="M9.5 21c2 1.4 4.3 1.4 6.5 0s4.5-1.4 6.5 0"/></svg>
+      </span>
+      <span class="brand-text">Waterlogging Watch</span>
+    </a>
+
+    <nav class="segmented" role="tablist" aria-label="Sections">
+      <button class="seg" role="tab" data-view="analyze" aria-selected="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16l4.5-4.5a2 2 0 0 1 2.8 0L16 16m-2-2 1.5-1.5a2 2 0 0 1 2.8 0L20 14M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+        <span>Analyze</span>
+      </button>
+      <button class="seg" role="tab" data-view="live" aria-selected="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 10l4.55-2.28A1 1 0 0 1 21 8.62v6.76a1 1 0 0 1-1.45.9L15 14M5 18h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2z"/></svg>
+        <span>Live</span>
+      </button>
+      <button class="seg" role="tab" data-view="history" aria-selected="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+        <span>History</span>
+      </button>
+    </nav>
+
+    <div class="status" id="status" title="Service status">
+      <span class="status-dot"></span><span class="status-text">Connecting</span>
+    </div>
+  </div>
+</header>
+
+<main class="shell">
+
+  <!-- ================= ANALYZE ================= -->
+  <section class="view is-active" id="view-analyze" role="tabpanel">
+    <div class="page-head">
+      <h1>Check a photo or video</h1>
+      <p>Upload road or street footage to see how much of the view is under standing water.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card card-controls">
+        <label class="dropzone" id="dropzone" tabindex="0">
+          <input type="file" id="file-input" accept="image/*,video/*" hidden>
+          <div class="dz-empty" id="dz-empty">
+            <span class="dz-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            </span>
+            <span class="dz-title">Drop a photo or video</span>
+            <span class="dz-sub">or <u>browse files</u> · JPG, PNG, MP4, MOV</span>
+          </div>
+          <div class="dz-file" id="dz-file" hidden>
+            <span class="dz-thumb" id="dz-thumb"></span>
+            <span class="dz-meta">
+              <span class="dz-name" id="dz-name"></span>
+              <span class="dz-size" id="dz-size"></span>
+            </span>
+            <button type="button" class="icon-btn" id="dz-clear" aria-label="Remove file">
+              <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+            </button>
+          </div>
+        </label>
+
+        <div class="field">
+          <label for="source-name">Location or camera <span class="optional">optional</span></label>
+          <input type="text" id="source-name" placeholder="e.g. Ring Road, Gate 3" autocomplete="off">
+        </div>
+
+        <div class="field" id="video-options" hidden>
+          <label for="frame-step">Video sampling</label>
+          <div class="select-wrap">
+            <select id="frame-step">
+              <option value="0.5">Every 0.5 seconds — thorough</option>
+              <option value="1" selected>Every second — balanced</option>
+              <option value="2">Every 2 seconds — faster</option>
+              <option value="5">Every 5 seconds — quick scan</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="toggle">
+          <input type="checkbox" id="save-history" checked>
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span>Save to history</span>
+        </label>
+
+        <button class="btn btn-primary btn-block" id="analyze-btn" disabled>
+          <span class="btn-label">Analyze</span>
+        </button>
+
+        <div class="progress" id="progress" hidden>
+          <div class="progress-row">
+            <span id="progress-text">Analyzing…</span>
+            <button type="button" class="link-btn" id="cancel-btn" hidden>Cancel</button>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="card card-result" id="result-card">
+        <div class="empty" id="result-empty">
+          <div class="empty-art" aria-hidden="true">
+            <svg viewBox="0 0 120 90"><rect x="8" y="10" width="104" height="70" rx="12"/><path d="M8 62c14-8 26-8 40 0s26 8 40 0 18-6 24-3"/><circle cx="38" cy="34" r="7"/></svg>
+          </div>
+          <h3>Results appear here</h3>
+          <p>Choose a photo or video and press Analyze.</p>
+        </div>
+
+        <div class="result" id="result" hidden>
+          <div class="stage" id="stage">
+            <canvas id="stage-canvas"></canvas>
+            <span class="stage-pill" id="stage-pill"></span>
+          </div>
+
+          <div class="verdict">
+            <div class="verdict-main">
+              <div class="big-number"><span id="v-pct">0</span><small>%</small></div>
+              <div>
+                <span class="sev-pill" id="v-pill">None</span>
+                <p class="verdict-sub" id="v-sub">of the view is covered by standing water</p>
+              </div>
+            </div>
+            <div class="scale" id="v-scale"></div>
+            <p class="verdict-text" id="v-text"></p>
+          </div>
+
+          <div class="callout callout-alert" id="v-alert" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            <div><strong>Alert</strong><span id="v-alert-text"></span></div>
+          </div>
+
+          <div class="stats" id="v-stats"></div>
+
+          <div class="video-panel" id="video-panel" hidden>
+            <div class="panel-head">
+              <h3>Timeline</h3>
+              <span class="muted" id="tl-hint">Select a bar to view that moment</span>
+            </div>
+            <div class="timeline" id="timeline" role="listbox" aria-label="Sampled frames"></div>
+            <div class="tl-axis"><span id="tl-start">0:00</span><span id="tl-end"></span></div>
+            <ul class="events" id="events"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LIVE ================= -->
+  <section class="view" id="view-live" role="tabpanel">
+    <div class="page-head">
+      <h1>Live camera</h1>
+      <p>Point a camera at the street. Standing water is highlighted as it is detected.</p>
+    </div>
+
+    <div class="grid-live">
+      <div class="card card-flush">
+        <div class="live-stage" id="live-stage">
+          <video id="live-video" playsinline muted></video>
+          <canvas id="live-overlay"></canvas>
+          <div class="live-idle" id="live-idle">
+            <span class="dz-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M15 10l4.55-2.28A1 1 0 0 1 21 8.62v6.76a1 1 0 0 1-1.45.9L15 14M5 18h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2z"/></svg>
+            </span>
+            <span>Camera is off</span>
+          </div>
+          <span class="live-badge" id="live-badge" hidden><span class="rec-dot"></span>Live</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="live-reading">
+          <div class="big-number"><span id="l-pct">0</span><small>%</small></div>
+          <span class="sev-pill" id="l-pill">None</span>
+        </div>
+        <div class="scale" id="l-scale"></div>
+        <p class="verdict-text" id="l-text">Start the camera to begin.</p>
+
+        <div class="field">
+          <label for="camera-select">Camera</label>
+          <div class="select-wrap"><select id="camera-select"><option value="">Default camera</option></select></div>
+        </div>
+        <div class="field">
+          <label for="live-name">Label <span class="optional">optional</span></label>
+          <input type="text" id="live-name" placeholder="e.g. Gate 3 camera" autocomplete="off">
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="live-save" checked>
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span>Save alerts to history</span>
+        </label>
+
+        <button class="btn btn-primary btn-block" id="live-toggle">Start camera</button>
+
+        <div class="stats stats-compact" id="l-stats"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HISTORY ================= -->
+  <section class="view" id="view-history" role="tabpanel">
+    <div class="page-head page-head-row">
+      <div>
+        <h1>History</h1>
+        <p>Checks saved on this device.</p>
+      </div>
+      <button class="btn btn-ghost" id="clear-history">Clear history</button>
+    </div>
+
+    <div class="tiles" id="tiles"></div>
+
+    <div class="card card-flush">
+      <div class="filters">
+        <div class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"/></svg>
+          <input type="search" id="f-search" placeholder="Search location">
+        </div>
+        <div class="chips" id="f-severity" role="group" aria-label="Minimum severity">
+          <button class="chip is-on" data-sev="">All</button>
+          <button class="chip" data-sev="minor">Minor+</button>
+          <button class="chip" data-sev="moderate">Moderate+</button>
+          <button class="chip" data-sev="severe">Severe+</button>
+        </div>
+        <div class="select-wrap select-sm">
+          <select id="f-source">
+            <option value="">All sources</option>
+            <option value="image">Photos</option>
+            <option value="video">Videos</option>
+            <option value="live">Live camera</option>
+          </select>
+        </div>
+        <div class="select-wrap select-sm">
+          <select id="f-range">
+            <option value="">Any time</option>
+            <option value="1">Last 24 hours</option>
+            <option value="7">Last 7 days</option>
+            <option value="30">Last 30 days</option>
+          </select>
+        </div>
+        <label class="toggle toggle-sm">
+          <input type="checkbox" id="f-alerts">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span>Alerts only</span>
+        </label>
+      </div>
+      <div class="history-grid" id="history-grid"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <p>Model trained on the <a href="https://universe.roboflow.com/try-0tjxt/water-logging-h74an" target="_blank" rel="noopener">Water Logging</a> dataset by Roboflow Universe user <em>try-0tjxt</em>, licensed <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
+    <p>A screening aid, not a safety system. Coverage shows surface area, not depth — never use it to judge whether a road is safe to enter.</p>
+  </div>
+</footer>
+
+<dialog class="modal" id="modal">
+  <form method="dialog" class="modal-close-form"><button class="icon-btn modal-close" aria-label="Close">
+    <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></form>
+  <img id="modal-img" alt="">
+  <div class="modal-body" id="modal-body"></div>
+</dialog>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

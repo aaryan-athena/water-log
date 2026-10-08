@@ -1,0 +1,26 @@
+# Deployment repository: ignore everything, then allow only what the
+# deployed app needs. Datasets, training code, notebooks, archives, local
+# virtualenvs and experiment output all stay on your machine.
+/*
+
+!/api/
+!/backend/
+!/public/
+!/models/
+!/requirements.txt
+!/vercel.json
+!/README.md
+!/.env.example
+!/.gitignore
+!/.vercelignore
+
+# Inside models/, ship only the ONNX model the API loads.
+/models/*
+!/models/waterlogging-seg.onnx
+
+# Never commit these, wherever they appear.
+.env
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db

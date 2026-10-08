@@ -1,0 +1,9 @@
+# Runtime dependencies for the deployed API (Vercel reads this file).
+# Deliberately no torch / ultralytics / opencv: inference runs on ONNX
+# Runtime with numpy + Pillow, keeping the function bundle well under
+# Vercel's 250 MB limit.
+fastapi>=0.115,<1.0
+python-multipart>=0.0.9
+numpy>=1.26
+pillow>=10.1
+onnxruntime>=1.18

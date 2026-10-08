@@ -1,0 +1,25 @@
+# Upload only what the deployed app needs (same rules as .gitignore), so a
+# CLI deploy never ships datasets, archives or local virtualenvs.
+/*
+
+!/api/
+!/backend/
+!/public/
+!/models/
+!/requirements.txt
+!/vercel.json
+!/README.md
+!/.env.example
+!/.gitignore
+!/.vercelignore
+
+# Inside models/, ship only the ONNX model the API loads.
+/models/*
+!/models/waterlogging-seg.onnx
+
+# Never commit these, wherever they appear.
+.env
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db
