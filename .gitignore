@@ -5,7 +5,7 @@
 
 !/api/
 !/backend/
-!/public/
+!/web/
 !/models/
 !/requirements.txt
 !/vercel.json

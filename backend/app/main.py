@@ -149,8 +149,10 @@ def meta():
     }
 
 
-# Local development: serve the static site from the same origin. On Vercel the
-# CDN serves public/ and this mount is never reached.
+# The website (web/) is served by this same app, locally and on Vercel. On
+# Vercel's FastAPI preset every request reaches this function with its real
+# path, and a folder named public/ would be stripped from the bundle -- which
+# is why the site lives in web/. Mounted last so /api/* routes win.
 if settings.frontend_dir.is_dir():
     from fastapi.staticfiles import StaticFiles
 

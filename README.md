@@ -4,7 +4,8 @@ Detects standing water on roads and streets from photos, videos and a live camer
 and reports **how much of the view is under water** as a coverage percentage with a
 plain-language severity band — *none, minor, moderate, severe, critical*.
 
-Built as a static site plus one small serverless API, so it deploys to Vercel as-is.
+A FastAPI app that serves both the website and the detection API, so it deploys to
+Vercel as a single function.
 
 ## Features
 
@@ -20,7 +21,7 @@ Built as a static site plus one small serverless API, so it deploys to Vercel as
 ## How it works
 
 ```
-Browser (public/)                              Serverless API (api/ -> backend/)
+Browser (web/)                                 FastAPI function (api/index.py -> backend/)
  photo / video frame / camera frame  --JPEG-->  POST /api/detect
  overlay drawn on the original      <--JSON---  coverage %, severity, alert,
  history saved in IndexedDB                     transparent mask PNG
@@ -40,10 +41,14 @@ Browser (public/)                              Serverless API (api/ -> backend/)
 
 1. Push this repository to GitHub.
 2. In Vercel, **Add New → Project** and import the repository.
-3. Keep the defaults — Framework Preset **Other**, no build command. Vercel serves
-   `public/` as the site and builds `api/index.py` as a Python function from
-   `requirements.txt`.
+3. Keep the defaults. `vercel.json` pins the **FastAPI** preset; Vercel installs
+   `requirements.txt` and runs `api/index.py`, which serves the API under `/api/` and
+   the website from `web/` at every other path.
 4. Deploy.
+
+> The website lives in `web/`, **not** `public/`. On Vercel's FastAPI preset a
+> `public/` folder is left out of the function, so the site would 404. Don't add URL
+> rewrites to `vercel.json` either: on this preset they change the path the app sees.
 
 Or from the command line: `npm i -g vercel`, then `vercel` (preview) or
 `vercel --prod`. `.vercelignore` limits the upload to the files the app needs.
@@ -63,8 +68,8 @@ pip install -r requirements.txt uvicorn
 uvicorn backend.app.main:app --reload --port 8000
 ```
 
-Open <http://localhost:8000>. Locally the API also serves the site, so one command
-runs everything.
+Open <http://localhost:8000>. The same app serves the site and the API, locally and
+on Vercel.
 
 ## API
 
@@ -84,10 +89,10 @@ curl -F "file=@road.jpg" https://<your-app>.vercel.app/api/detect
 ```
 api/index.py          Vercel entrypoint (exposes the FastAPI app)
 backend/app/          API: ONNX inference, severity, overlay rendering, settings
-public/               The website: HTML, CSS, JS modules (no build step)
+web/                  The website: HTML, CSS, JS modules (no build step)
 models/               waterlogging-seg.onnx — the trained segmentation model
 requirements.txt      Python dependencies for the API
-vercel.json           Function settings and /api routing
+vercel.json           Pins Vercel's FastAPI preset
 ```
 
 ## Severity bands

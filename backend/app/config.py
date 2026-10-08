@@ -41,7 +41,7 @@ class Settings:
     #: Longest image side processed. Larger inputs are downscaled first.
     max_side: int = field(default_factory=lambda: _int("WATERLOG_MAX_SIDE", 1600))
     frontend_dir: Path = field(default_factory=lambda: Path(
-        _env("WATERLOG_FRONTEND_DIR", str(REPO_ROOT / "public"))))
+        _env("WATERLOG_FRONTEND_DIR", str(REPO_ROOT / "web"))))
 
     def public(self) -> dict:
         return {
